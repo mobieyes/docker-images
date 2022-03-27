@@ -1,0 +1,14 @@
+ARG RUNTIME_VARIANT=6.0
+ARG BASE_VARIANT=base-debian11
+FROM mcr.microsoft.com/dotnet/aspnet:${RUNTIME_VARIANT} as runtime
+
+# Create runtime image
+FROM gcr.io/distroless/${BASE_VARIANT}:nonroot as base
+
+# Copy dependencies from the official microsoft image
+COPY --from=runtime /usr/bin/dotnet /usr/bin/dotnet
+COPY --from=runtime /usr/lib /usr/lib
+COPY --from=runtime /lib /lib
+
+# Set least privileged user
+USER nonroot
